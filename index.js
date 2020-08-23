@@ -75,7 +75,7 @@ app.delete("/vividly/generes/:id", (req, res) => {
     res.send(generes);
   });
 
-const port = 8080;
+const port = 5000;
 app.listen(port, () =>
   console.log(`Listining on port ${port}----------------->`)
 );
