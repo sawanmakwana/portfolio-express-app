@@ -20,7 +20,7 @@ const generes = [
   }
 ];
 
-app.get("/", (req, res) => {
+app.get("/api/", (req, res) => {
   res.send(generes);
 });
 
@@ -75,7 +75,7 @@ app.delete("/vividly/generes/:id", (req, res) => {
     res.send(generes);
   });
 
-const port = 5000;
+const port = 8080;
 app.listen(port, () =>
   console.log(`Listining on port ${port}----------------->`)
 );
