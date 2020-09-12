@@ -1,12 +1,12 @@
-// import { validateGenere } from "./../validation/genereValidate";
+import { contactFromValidate } from "../validation/contactFormValidate";
 
-const Genere = require("./../models/genere");
+const ContactForm = require("../models/contact_form");
 const express = require("express");
 const mongoose = require("mongoose");
 const router = express.Router();
 
 router.get("/", (req, res) => {
-  Genere.find()
+  ContactForm.find()
     .exec()
     .then(result => {
       console.log("Got products--->", result);
@@ -20,7 +20,7 @@ router.get("/", (req, res) => {
 
 router.get("/:id", (req, res) => {
   const id = req.params.id;
-  Genere.findById(id)
+  ContactForm.findById(id)
     .exec()
     .then(result => {
       console.log("Got product successfuly--->", result);
@@ -33,17 +33,17 @@ router.get("/:id", (req, res) => {
 });
 
 router.post("/", (req, res) => {
-//   const { error } = validateGenere(req.body);
+  const { error } = contactFromValidate(req.body);
 
-//   if (error) return res.status(400).send(error.details[0].message);
+  if (error) return res.status(400).send(error.details[0].message);
 
-  const genere = {
+  const contact = {
     _id: new mongoose.Types.ObjectId(),
     name: req.body.name
   };
 
-  const genereInstance = new Genere(genere);
-  genereInstance
+  const contactInstance = new ContactForm(contact);
+  contactInstance
     .save()
     .then(result => {
       console.log("Saved Successfully", result);
@@ -51,11 +51,11 @@ router.post("/", (req, res) => {
     .catch(err => {
       console.log("Error----->", err);
     });
-  res.send(genere);
+  res.send(contact);
 });
 
 router.put("/:id", (req, res) => {
-//   const { error } = validateGenere(req.body);
+//   const { error } = contactFromValidate(req.body);
 //   if (error) return res.status(400).send(error.details[0].message);
 
   const id = req.params.id;
@@ -63,7 +63,7 @@ router.put("/:id", (req, res) => {
     name: req.body.name
   };
 
-  Genere.update({ _id: id }, updateContent)
+  ContactForm.update({ _id: id }, updateContent)
     .exec()
     .then(result => {
       res.status(200).json(result);
@@ -80,7 +80,7 @@ router.put("/:id", (req, res) => {
 router.delete("/:id", (req, res) => {
   const id = req.params.id;
 
-  Genere.remove({ _id: id })
+  ContactForm.remove({ _id: id })
     .exec()
     .then(result => {
       res.status(200).json(result);

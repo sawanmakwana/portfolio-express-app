@@ -1,91 +1,56 @@
 const express = require("express");
 const Joi = require("joi");
 const app = express();
+const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
+const generesRoutes = require("./routes/generes");
 
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
-app.use(express.json());
-
-const generes = [
+mongoose.connect(
+  `mongodb+srv://sawan_mak:jGlAN2TsQLWoOaW3@cluster0.yudat.mongodb.net/portfolio?retryWrites=true&w=majority`,
   {
-    id: 1,
-    name: "horror"
-  },
-  {
-    id: 2,
-    name: "drama"
-  },
-  {
-    id: 3,
-    name: "romance"
+    useNewUrlParser: true,
   }
-];
-
-app.get("/api/", (req, res) => {
-  res.send(generes);
-});
-
-app.get("/vividly/generes", (req, res) => {
-  res.send(generes);
-});
-
-app.get("/vividly/generes/:id", (req, res) => {
-  const genere = generes.find(gen => gen.id === parseInt(req.params.id));
-
-  if (!genere)
-    return res.status(404).send("No genere found with your Request Id");
-
-  res.send(genere);
-});
-
-app.post("/vividly/generes", (req, res) => {
-  const { error } = validateGenere(req.body);
-
-  if (error) return res.status(400).send(error.details[0].message);
-
-  const genere = {
-    id: generes.length + 1,
-    name: req.body.name
-  };
-
-  generes.push(genere);
-  res.send(genere);
-});
-
-app.put("/vividly/generes/:id", (req, res) => {
-  const genere = generes.find(gen => gen.id === parseInt(req.params.id));
-  if (!genere)
-    return res.status(404).send("No genere found with your Request Id");
-
-  const { error } = validateGenere(req.body);
-
-  if (error) return res.status(400).send(error.details[0].message);
-  genere.name = req.body.name;
-  res.send(genere);
-});
-
-app.delete("/vividly/generes/:id", (req, res) => {
-    const genere = generes.find(gen => gen.id === parseInt(req.params.id));
-    if (!genere)
-      return res.status(404).send("No genere found with your Request Id");
-  
-    const index = generes.indexOf(genere);
-    generes.splice(index,1);
-  
-   
-    res.send(generes);
-  });
-
-const port = 5000;
-app.listen(port, () =>
-  console.log(`Listining on port ${port}----------------->`)
 );
 
-const validateGenere = genere => {
-  const schema = {
-    name: Joi.string()
-      .min(3)
-      .required()
-  };
+mongoose.connection
+  .once("open", () => console.log("Connected"))
+  .on("error", (err) => {
+    console.log("mY ERROR", err);
+  });
 
-  return Joi.validate(genere, schema);
-};
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
+  if (req.method === "OPTIONS") {
+    res.header("Access-Control-Allow-Methods", "PUT, POST, PATCH, DELETE, GET");
+    return res.status(200).json({});
+  }
+  next();
+});
+
+app.use("/vividly/generes", generesRoutes);
+
+app.use((req, res, next) => {
+  const error = new Error("Not found");
+  error.status = 404;
+  next(error);
+});
+
+app.use((error, req, res, next) => {
+  res.status(error.status || 500);
+  res.json({
+    error: {
+      message: error.message,
+    },
+  });
+});
+
+app.listen(5000, () =>
+  console.log(`Listining on port ${5000}----------------->`)
+);

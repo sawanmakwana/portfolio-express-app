@@ -5,4 +5,4 @@ const genereSchema = mongoose.Schema({
   name: String
 });
 
-module.exports = mongoose.model("Genere", genereSchema);
+module.exports = mongoose.model("ContactForm", genereSchema);
