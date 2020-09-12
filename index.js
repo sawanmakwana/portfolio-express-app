@@ -3,7 +3,7 @@ const Joi = require("joi");
 const app = express();
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-const generesRoutes = require("./routes/generes");
+const routes = require("./routes/routes");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -34,7 +34,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/vividly/generes", generesRoutes);
+app.use("/api", routes);
 
 app.use((req, res, next) => {
   const error = new Error("Not found");
