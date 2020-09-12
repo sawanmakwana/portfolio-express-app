@@ -1,7 +1,7 @@
 
 const Joi = require("joi");
 
-export const contactFromValidate = contact => {
+const contactFromValidate = contact => {
     const schema = {
       name: Joi.string()
         .min(3)
@@ -11,3 +11,5 @@ export const contactFromValidate = contact => {
     return Joi.validate(contact, schema);
   };
   
+
+  module.exports = contactFromValidate
